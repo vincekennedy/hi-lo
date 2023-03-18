@@ -35,12 +35,12 @@ fun HiLoApp(
   navController: NavHostController = rememberNavController()
 ) {
 
-  // Get current back stack entry
-//  val backStackEntry by navController.currentBackStackEntryAsState()
-  // Get the name of the current screen
-//  val currentScreen = MatchScreen.valueOf(
-//    backStackEntry?.destination?.route ?: MatchScreen.Start.name
-//  )
+  //Get current back stack entry
+  //val backStackEntry by navController.currentBackStackEntryAsState()
+  //Get the name of the current screen
+  //val currentScreen = MatchScreen.valueOf(
+  // backStackEntry?.destination?.route ?: MatchScreen.Start.name
+  //)
 
   val golfer1Name = remember { mutableStateOf("") }
   val golfer1Hcp = remember { mutableStateOf("") }
@@ -51,7 +51,7 @@ fun HiLoApp(
   val golfer4Name = remember { mutableStateOf("") }
   val golfer4Hcp = remember { mutableStateOf("") }
 
-  Scaffold(topBar = { AppBar() }, content = { padding ->
+  Scaffold(topBar = { AppBar(viewModel.hole.value) }, content = { padding ->
     NavHost(
       navController = navController,
       startDestination = MatchScreen.Start.name,
@@ -68,7 +68,9 @@ fun HiLoApp(
           EnterGolfer(name = golfer3Name, handicap = golfer3Hcp)
           EnterGolfer(name = golfer4Name, handicap = golfer4Hcp)
           Spacer(modifier = Modifier.weight(1.0f))
-          Button(modifier = Modifier.fillMaxWidth().height(48.dp),
+          Button(modifier = Modifier
+            .fillMaxWidth()
+            .height(48.dp),
                  onClick = {
                    viewModel.setMatch(
                      Team(
@@ -76,17 +78,17 @@ fun HiLoApp(
                        Golfer(golfer2Name.value, golfer2Hcp.value.toInt())
                      ),
                      Team(
-                       Golfer(golfer3Name.value, golfer1Hcp.value.toInt()),
-                       Golfer(golfer4Name.value, golfer2Hcp.value.toInt())
+                       Golfer(golfer3Name.value, golfer3Hcp.value.toInt()),
+                       Golfer(golfer4Name.value, golfer4Hcp.value.toInt())
                      )
                    )
-                   navController.navigate(MatchScreen.HOLE.name)
+                   navController.navigate(MatchScreen.ONE.name)
                  }) {
             Text(text = "Start Match")
           }
         }
       }
-      composable(route = MatchScreen.HOLE.name) {
+      composable(route = MatchScreen.ONE.name) {
         HoleScoring(viewModel)
       }
     }
@@ -118,30 +120,10 @@ private fun EnterGolfer(
 }
 
 @Composable
-fun AppBar() {
+fun AppBar(value: Int?) {
   TopAppBar(
     navigationIcon = null, title = {
-      Text(text = "Hi-Lo")
+      Text(text = "Hole $value")
     }, backgroundColor = MaterialTheme.colors.primarySurface
   )
-}
-
-@Composable
-fun HoleScoring(matchViewModel: MatchViewModel) {
-  Column(modifier = Modifier.padding(12.dp)) {
-    Text(text = "Hole : 1   HCP: 11   Par 4")
-    Spacer(modifier = Modifier.height(12.dp))
-//    playerScore(matchViewModel)
-//    playerScore(matchViewModel)
-    Spacer(modifier = Modifier.height(48.dp))
-//    playerScore(matchViewModel)
-//    playerScore(matchViewModel)
-    Spacer(modifier = Modifier.weight(1.0f))
-    Button(modifier = Modifier
-      .fillMaxWidth()
-      .height(48.dp),
-           content = { Text(text = "Next Hole") },
-           onClick = {
-           })
-  }
 }
