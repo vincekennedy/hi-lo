@@ -1,6 +1,5 @@
 package com.example.hi_lo
 
-import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -17,18 +16,15 @@ import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.primarySurface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 
 
@@ -40,11 +36,20 @@ fun HiLoApp(
 ) {
 
   // Get current back stack entry
-  val backStackEntry by navController.currentBackStackEntryAsState()
+//  val backStackEntry by navController.currentBackStackEntryAsState()
   // Get the name of the current screen
-  val currentScreen = MatchScreen.valueOf(
-    backStackEntry?.destination?.route ?: MatchScreen.Start.name
-  )
+//  val currentScreen = MatchScreen.valueOf(
+//    backStackEntry?.destination?.route ?: MatchScreen.Start.name
+//  )
+
+  val golfer1Name = remember { mutableStateOf("") }
+  val golfer1Hcp = remember { mutableStateOf("") }
+  val golfer2Name = remember { mutableStateOf("") }
+  val golfer2Hcp = remember { mutableStateOf("") }
+  val golfer3Name = remember { mutableStateOf("") }
+  val golfer3Hcp = remember { mutableStateOf("") }
+  val golfer4Name = remember { mutableStateOf("") }
+  val golfer4Hcp = remember { mutableStateOf("") }
 
   Scaffold(topBar = { AppBar() }, content = { padding ->
     NavHost(
@@ -52,18 +57,64 @@ fun HiLoApp(
       startDestination = MatchScreen.Start.name,
       modifier = modifier.padding(padding)
     ) {
+
       composable(route = MatchScreen.Start.name) {
-        MatchSetupForm(viewModel) {
-          Toast.makeText(navController.context, "Clicked!", Toast.LENGTH_LONG).show()
-          viewModel.setMatch()
-          navController.navigate(MatchScreen.HOLE.name)
+        Column(modifier = Modifier.padding(8.dp)) {
+          Text("Team 1")
+          EnterGolfer(name = golfer1Name, handicap = golfer1Hcp)
+          EnterGolfer(name = golfer2Name, handicap = golfer2Hcp)
+          Spacer(modifier = Modifier.height(24.dp))
+          Text("Team 2")
+          EnterGolfer(name = golfer3Name, handicap = golfer3Hcp)
+          EnterGolfer(name = golfer4Name, handicap = golfer4Hcp)
+          Spacer(modifier = Modifier.weight(1.0f))
+          Button(modifier = Modifier.fillMaxWidth().height(48.dp),
+                 onClick = {
+                   viewModel.setMatch(
+                     Team(
+                       Golfer(golfer1Name.value, golfer1Hcp.value.toInt()),
+                       Golfer(golfer2Name.value, golfer2Hcp.value.toInt())
+                     ),
+                     Team(
+                       Golfer(golfer3Name.value, golfer1Hcp.value.toInt()),
+                       Golfer(golfer4Name.value, golfer2Hcp.value.toInt())
+                     )
+                   )
+                   navController.navigate(MatchScreen.HOLE.name)
+                 }) {
+            Text(text = "Start Match")
+          }
         }
       }
       composable(route = MatchScreen.HOLE.name) {
-        holeScoring()
+        HoleScoring(viewModel)
       }
     }
   })
+}
+
+@Composable
+private fun EnterGolfer(
+  name: MutableState<String>,
+  handicap: MutableState<String>
+) {
+  Row(modifier = Modifier.padding(4.dp)) {
+    OutlinedTextField(value = name.value,
+                      label = { Text("Name") },
+                      onValueChange = {
+                        name.value = it
+                      }
+    )
+    Spacer(modifier = Modifier.width(12.dp))
+    OutlinedTextField(
+      value = handicap.value,
+      label = { Text("HCP") },
+      onValueChange = {
+        handicap.value = it
+      },
+      keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+    )
+  }
 }
 
 @Composable
@@ -76,84 +127,21 @@ fun AppBar() {
 }
 
 @Composable
-fun MatchSetupForm(
-  viewModel: MatchViewModel,
-  onStartMatchClicked: () -> Unit
-) {
-
-  val player1 by rememberSaveable {
-    mutableStateOf(Player())
-  }
-
-  val player2 by rememberSaveable {
-    mutableStateOf(Player())
-  }
-  val player3 by rememberSaveable {
-    mutableStateOf(Player())
-  }
-  val player4 by rememberSaveable {
-    mutableStateOf(Player())
-  }
+fun HoleScoring(matchViewModel: MatchViewModel) {
   Column(modifier = Modifier.padding(12.dp)) {
-    Text("Team 1")
-    TeamEntry(player1, player2)
+    Text(text = "Hole : 1   HCP: 11   Par 4")
+    Spacer(modifier = Modifier.height(12.dp))
+//    playerScore(matchViewModel)
+//    playerScore(matchViewModel)
     Spacer(modifier = Modifier.height(48.dp))
-    Text("Team 2")
-    TeamEntry(player3, player4)
+//    playerScore(matchViewModel)
+//    playerScore(matchViewModel)
     Spacer(modifier = Modifier.weight(1.0f))
     Button(modifier = Modifier
       .fillMaxWidth()
       .height(48.dp),
-           content = { Text(text = "Start Match") },
+           content = { Text(text = "Next Hole") },
            onClick = {
-             onStartMatchClicked()
            })
   }
 }
-
-@Composable
-fun TeamEntry(player1: Player, player2: Player) {
-  PlayerEntry(player1)
-  PlayerEntry(player2)
-}
-
-
-@Composable
-fun PlayerEntry(player: Player) {
-  Row {
-    OutlinedTextField(value = "",
-                      onValueChange = {
-                        player = Player(name = it)
-                      },
-                      label = { Text("Name") })
-    Spacer(modifier = Modifier.width(12.dp))
-    OutlinedTextField(
-      value = "",
-      onValueChange = {
-        player = Player(hcp = it.toInt())
-      },
-      label = {
-        Text("HCP")
-      }, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
-    )
-  }
-}
-
-@Preview
-@Composable
-fun holeScoring() {
-  Column(modifier = Modifier.padding(12.dp)) {
-    Text(text = "Hole : 1   HCP: 11   Par 4")
-    Spacer(modifier = Modifier.height(12.dp))
-    Row(verticalAlignment = Alignment.CenterVertically) {
-      Text(text = "Name: Player Name")
-      Spacer(modifier = Modifier.width(12.dp))
-      OutlinedTextField(
-        value = "",
-        onValueChange = {},
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
-      )
-    }
-  }
-}
-

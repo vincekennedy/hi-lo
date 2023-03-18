@@ -1,37 +1,42 @@
 package com.example.hi_lo
 
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
 
-class MatchViewModel : ViewModel() {
+data class Team(val golfer1: Golfer = Golfer(), val golfer2: Golfer = Golfer())
 
-  private val stateFlow = MutableStateFlow(MatchUiState())
-  val state: StateFlow<MatchUiState> = stateFlow.asStateFlow()
+data class Golfer(var name: String = "", var hcp: Int = 0)
 
-  private val team1StateFlow = MutableStateFlow(Team(listOf()))
-  val team1State: StateFlow<Team> = team1StateFlow.asStateFlow()
+class ScoreViewModel : ViewModel() {
+  val team1Score: MutableLiveData<Int> = MutableLiveData(0)
+  val team2Score: MutableLiveData<Int> = MutableLiveData(0)
+  val hole: MutableLiveData<Int> = MutableLiveData(1)
 
-  fun updateTeam1(player1: Player, player2: Player){
-    team1StateFlow.update { team1 ->
-      team1.copy(listOf(player1, player2))
-    }
+  fun addPointsToTeam1Score(pts: Int) {
+    team1Score.value = team1Score.value?.plus(pts)
   }
 
-  fun setMatch() {
-    stateFlow.update { state ->
-      state.copy(currentHole = state.currentHole.inc())
-    }
+  fun addPointsToTeam2Score(pts: Int) {
+    team1Score.value = team2Score.value?.plus(pts)
+  }
+
+  fun nextHole() {
+    hole.value = hole.value?.inc()
+  }
+
+  fun resetGame() {
+    team1Score.value = 0
+    team2Score.value = 0
+    hole.value = 1
   }
 }
 
-data class Team(val players: List<Player>)
+class MatchViewModel : ViewModel() {
+  var team1: Team = Team()
+  var team2: Team = Team()
 
-data class Player(val name: String = "", val hcp: Int = 0)
-
-data class MatchUiState(
-  val currentHole: Int = 1,
-  val currentScore: Int = 0,
-)
+  fun setMatch(team1: Team, team2: Team) {
+    this.team1 = team1
+    this.team2 = team2
+  }
+}
