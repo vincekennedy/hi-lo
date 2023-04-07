@@ -1,4 +1,4 @@
-package com.example.hi_lo
+package com.example.hi_lo.data
 
 class Course {
 }

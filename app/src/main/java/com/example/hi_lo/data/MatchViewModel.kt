@@ -1,4 +1,4 @@
-package com.example.hi_lo
+package com.example.hi_lo.data
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -29,6 +29,9 @@ class MatchViewModel : ViewModel() {
     this.team2 = team2
   }
 
+  fun hasNextHole() : Boolean {
+    return hole.value!! < 18
+  }
 
   fun nextHole() {
     hole.value = hole.value?.inc()

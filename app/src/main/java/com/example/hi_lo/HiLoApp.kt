@@ -26,6 +26,12 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.hi_lo.data.Golfer
+import com.example.hi_lo.data.MatchScreen
+import com.example.hi_lo.data.MatchViewModel
+import com.example.hi_lo.data.Team
+import com.example.hi_lo.data.course
+import com.example.hi_lo.ui.PlayerScore
 
 
 @Composable
@@ -34,13 +40,6 @@ fun HiLoApp(
   viewModel: MatchViewModel = MatchViewModel(),
   navController: NavHostController = rememberNavController()
 ) {
-
-  //Get current back stack entry
-  //val backStackEntry by navController.currentBackStackEntryAsState()
-  //Get the name of the current screen
-  //val currentScreen = MatchScreen.valueOf(
-  // backStackEntry?.destination?.route ?: MatchScreen.Start.name
-  //)
 
   val golfer1Name = remember { mutableStateOf("") }
   val golfer1Hcp = remember { mutableStateOf("") }
@@ -51,14 +50,14 @@ fun HiLoApp(
   val golfer4Name = remember { mutableStateOf("") }
   val golfer4Hcp = remember { mutableStateOf("") }
 
-  Scaffold(topBar = { AppBar(viewModel.hole.value) }, content = { padding ->
+  Scaffold(topBar = { AppBar(viewModel) }, content = { padding ->
     NavHost(
       navController = navController,
-      startDestination = MatchScreen.Start.name,
+      startDestination = MatchScreen.START.name,
       modifier = modifier.padding(padding)
     ) {
 
-      composable(route = MatchScreen.Start.name) {
+      composable(route = MatchScreen.START.name) {
         Column(modifier = Modifier.padding(8.dp)) {
           Text("Team 1")
           EnterGolfer(name = golfer1Name, handicap = golfer1Hcp)
@@ -82,14 +81,70 @@ fun HiLoApp(
                        Golfer(golfer4Name.value, golfer4Hcp.value.toInt())
                      )
                    )
-                   navController.navigate(MatchScreen.ONE.name)
+                   navController.navigate(MatchScreen.SCORE.name)
                  }) {
             Text(text = "Start Match")
           }
         }
       }
-      composable(route = MatchScreen.ONE.name) {
-        HoleScoring(viewModel)
+      composable(route = MatchScreen.SCORE.name) {
+        val hole = course[viewModel.hole.value!! - 1]
+        Column(modifier = Modifier.padding(12.dp)) {
+          Text(text = "HCP: ${hole.second}   Par ${hole.third}")
+          Spacer(modifier = Modifier.height(12.dp))
+          PlayerScore(viewModel.team1.golfer1, hole.second)
+          PlayerScore(viewModel.team1.golfer2, hole.second)
+          Spacer(modifier = Modifier.height(48.dp))
+          PlayerScore(viewModel.team2.golfer1, hole.second)
+          PlayerScore(viewModel.team2.golfer2, hole.second)
+          Spacer(modifier = Modifier.weight(1.0f))
+          Button(modifier = Modifier
+            .fillMaxWidth()
+            .height(48.dp),
+                 content = {
+                   if (viewModel.hasNextHole()) {
+                     Text(text = "Next Hole")
+                   } else {
+                     Text(text = "Finish")
+                   }
+                 },
+                 onClick = {
+                   viewModel.addPointsToTeam1Score(1)
+                   viewModel.addPointsToTeam2Score(2)
+                   if (viewModel.hasNextHole()) {
+                     viewModel.nextHole()
+                     navController.navigate(MatchScreen.SCORE.name)
+                   } else {
+                     navController.navigate(MatchScreen.SUMMARY.name)
+                   }
+                 })
+        }
+      }
+      composable(route = MatchScreen.SUMMARY.name) {
+        Column(modifier = Modifier.padding(12.dp)) {
+          Text(text = "Summary View")
+          Spacer(modifier = Modifier.weight(1.0f))
+          Button(modifier = Modifier
+            .fillMaxWidth()
+            .height(48.dp),
+                 content = { Text(text = "Finish") },
+                 onClick = {
+                   navController.navigate(MatchScreen.SETTLE.name)
+                 })
+        }
+      }
+      composable(route = MatchScreen.SETTLE.name) {
+        Column(modifier = Modifier.padding(12.dp)) {
+          Text(text = "Settle Up : ${viewModel.team1Score.value} \t ${viewModel.team2Score.value}")
+          Button(modifier = Modifier
+            .fillMaxWidth()
+            .height(48.dp),
+                 content = { Text(text = "Start New Match") },
+                 onClick = {
+                   viewModel.resetMatch()
+                   navController.navigate(MatchScreen.START.name)
+                 })
+        }
       }
     }
   })
@@ -120,10 +175,10 @@ private fun EnterGolfer(
 }
 
 @Composable
-fun AppBar(value: Int?) {
+fun AppBar(viewModel: MatchViewModel) {
   TopAppBar(
     navigationIcon = null, title = {
-      Text(text = "Hole $value")
+      Text(text = "Hole ${viewModel.hole.value}")
     }, backgroundColor = MaterialTheme.colors.primarySurface
   )
 }

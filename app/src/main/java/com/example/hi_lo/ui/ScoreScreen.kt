@@ -1,7 +1,8 @@
-package com.example.hi_lo
+package com.example.hi_lo.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize.Max
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -18,6 +19,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import com.example.hi_lo.data.Golfer
+import com.example.hi_lo.data.MatchViewModel
+import com.example.hi_lo.data.course
 
 @Composable
 fun HoleScoring(matchViewModel: MatchViewModel) {
@@ -51,15 +55,18 @@ fun PlayerScore(golfer: Golfer, hcp: Int) {
     Color.Transparent
   }
   Row(
-    modifier = Modifier.padding(4.dp).background(background),
+    modifier = Modifier
+      .background(background).width(Max),
     verticalAlignment = Alignment.CenterVertically,
   ) {
     Text(
       text = "${golfer.name} (${golfer.hcp})",
-    )
+
+      )
     Spacer(modifier = Modifier.width(12.dp))
     OutlinedTextField(
       value = "",
+
       label = { Text("Score") },
       onValueChange = {
       },
