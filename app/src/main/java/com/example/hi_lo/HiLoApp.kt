@@ -1,40 +1,33 @@
 package com.example.hi_lo
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.primarySurface
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.hi_lo.data.Golfer
 import com.example.hi_lo.data.MatchScreen
 import com.example.hi_lo.data.MatchViewModel
-import com.example.hi_lo.data.Team
 import com.example.hi_lo.data.course
 import com.example.hi_lo.ui.PlayerScore
+import com.example.hi_lo.ui.SetupMatch
 
 @Composable
 fun HiLoApp(
@@ -72,34 +65,35 @@ fun HiLoApp(
       ) {
 
         composable(route = MatchScreen.START.name) {
-          Column(modifier = Modifier.padding(8.dp)) {
-            Text("Team 1")
-            EnterGolfer(name = golfer1Name, handicap = golfer1Hcp)
-            EnterGolfer(name = golfer2Name, handicap = golfer2Hcp)
-            Spacer(modifier = Modifier.height(24.dp))
-            Text("Team 2")
-            EnterGolfer(name = golfer3Name, handicap = golfer3Hcp)
-            EnterGolfer(name = golfer4Name, handicap = golfer4Hcp)
-            Spacer(modifier = Modifier.weight(1.0f))
-            Button(modifier = Modifier
-              .fillMaxWidth()
-              .height(48.dp),
-                   onClick = {
-                     viewModel.startMatch(
-                       Team(
-                         Golfer(golfer1Name.value, golfer1Hcp.value.toInt()),
-                         Golfer(golfer2Name.value, golfer2Hcp.value.toInt())
-                       ),
-                       Team(
-                         Golfer(golfer3Name.value, golfer3Hcp.value.toInt()),
-                         Golfer(golfer4Name.value, golfer4Hcp.value.toInt())
-                       )
-                     )
-                     navController.navigate(MatchScreen.SCORE.name)
-                   }) {
-              Text(text = "Start Match")
-            }
-          }
+          SetupMatch(viewModel, navController)
+//          Column(modifier = Modifier.padding(8.dp)) {
+//            Text("Team 1")
+//            EnterGolfer(name = golfer1Name, handicap = golfer1Hcp)
+//            EnterGolfer(name = golfer2Name, handicap = golfer2Hcp)
+//            Spacer(modifier = Modifier.height(24.dp))
+//            Text("Team 2")
+//            EnterGolfer(name = golfer3Name, handicap = golfer3Hcp)
+//            EnterGolfer(name = golfer4Name, handicap = golfer4Hcp)
+//            Spacer(modifier = Modifier.weight(1.0f))
+//            Button(modifier = Modifier
+//              .fillMaxWidth()
+//              .height(48.dp),
+//                   onClick = {
+//                     viewModel.startMatch(
+//                       Team(
+//                         Golfer(golfer1Name.value, golfer1Hcp.value.toInt()),
+//                         Golfer(golfer2Name.value, golfer2Hcp.value.toInt())
+//                       ),
+//                       Team(
+//                         Golfer(golfer3Name.value, golfer3Hcp.value.toInt()),
+//                         Golfer(golfer4Name.value, golfer4Hcp.value.toInt())
+//                       )
+//                     )
+//                     navController.navigate(MatchScreen.SCORE.name)
+//                   }) {
+//              Text(text = "Start Match")
+//            }
+//          }
         }
         composable(route = MatchScreen.SCORE.name) {
           val hole = course[viewModel.hole.value!! - 1]
@@ -161,28 +155,4 @@ fun HiLoApp(
         }
       }
     })
-}
-
-@Composable
-private fun EnterGolfer(
-  name: MutableState<String>,
-  handicap: MutableState<String>
-) {
-  Row(modifier = Modifier.padding(4.dp)) {
-    OutlinedTextField(value = name.value,
-                      label = { Text("Name") },
-                      onValueChange = {
-                        name.value = it
-                      }
-    )
-    Spacer(modifier = Modifier.width(12.dp))
-    OutlinedTextField(
-      value = handicap.value,
-      label = { Text("HCP") },
-      onValueChange = {
-        handicap.value = it
-      },
-      keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
-    )
-  }
 }
