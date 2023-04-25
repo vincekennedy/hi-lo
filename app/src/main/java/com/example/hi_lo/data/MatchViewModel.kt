@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 
 data class Team(val golfer1: Golfer = Golfer(), val golfer2: Golfer = Golfer())
 
-data class Golfer(var name: String = "", var hcp: Int = 0)
+data class Golfer(var name: String = "Test", var hcp: Int = (Math.random() * 36).toInt())
 
 class MatchViewModel : ViewModel() {
   var team1: Team = Team()

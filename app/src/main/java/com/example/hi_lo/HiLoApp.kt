@@ -25,8 +25,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.hi_lo.data.MatchScreen
 import com.example.hi_lo.data.MatchViewModel
-import com.example.hi_lo.data.course
-import com.example.hi_lo.ui.PlayerScore
+import com.example.hi_lo.ui.EnterScore
 import com.example.hi_lo.ui.SetupMatch
 
 @Composable
@@ -60,7 +59,7 @@ fun HiLoApp(
     content = { padding ->
       NavHost(
         navController = navController,
-        startDestination = MatchScreen.START.name,
+        startDestination = MatchScreen.SCORE.name,
         modifier = modifier.padding(padding)
       ) {
 
@@ -68,36 +67,7 @@ fun HiLoApp(
           SetupMatch(viewModel, navController)
         }
         composable(route = MatchScreen.SCORE.name) {
-          val hole = course[viewModel.hole.value!! - 1]
-          Column(modifier = Modifier.padding(12.dp)) {
-            Spacer(modifier = Modifier.height(12.dp))
-            PlayerScore(viewModel.team1.golfer1, hole.second)
-            PlayerScore(viewModel.team1.golfer2, hole.second)
-            Spacer(modifier = Modifier.height(48.dp))
-            PlayerScore(viewModel.team2.golfer1, hole.second)
-            PlayerScore(viewModel.team2.golfer2, hole.second)
-            Spacer(modifier = Modifier.weight(1.0f))
-            Button(modifier = Modifier
-              .fillMaxWidth()
-              .height(48.dp),
-                   content = {
-                     if (viewModel.hasNextHole()) {
-                       Text(text = "Next Hole")
-                     } else {
-                       Text(text = "Finish")
-                     }
-                   },
-                   onClick = {
-                     viewModel.addPointsToTeam1Score(1)
-                     viewModel.addPointsToTeam2Score(2)
-                     if (viewModel.hasNextHole()) {
-                       viewModel.nextHole()
-                       navController.navigate(MatchScreen.SCORE.name)
-                     } else {
-                       navController.navigate(MatchScreen.SUMMARY.name)
-                     }
-                   })
-          }
+          EnterScore(viewModel, navController)
         }
         composable(route = MatchScreen.SUMMARY.name) {
           Column(modifier = Modifier.padding(12.dp)) {
