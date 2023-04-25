@@ -20,41 +20,51 @@ import com.example.hi_lo.data.Team
 
 @Composable
 fun SetupMatch(viewModel: MatchViewModel, navController: NavHostController) {
-  val golfer1Name = remember { mutableStateOf("") }
-  val golfer1Hcp = remember { mutableStateOf("") }
-  val golfer2Name = remember { mutableStateOf("") }
-  val golfer2Hcp = remember { mutableStateOf("") }
-  val golfer3Name = remember { mutableStateOf("") }
-  val golfer3Hcp = remember { mutableStateOf("") }
-  val golfer4Name = remember { mutableStateOf("") }
-  val golfer4Hcp = remember { mutableStateOf("") }
+  val name1 = remember { mutableStateOf("") }
+  val hcp1 = remember { mutableStateOf("") }
+  val name2 = remember { mutableStateOf("") }
+  val hcp2 = remember { mutableStateOf("") }
+  val name3 = remember { mutableStateOf("") }
+  val hcp3 = remember { mutableStateOf("") }
+  val name4 = remember { mutableStateOf("") }
+  val hcp4 = remember { mutableStateOf("") }
+
+  val enableStart =
+    name1.value.isNotEmpty() && name2.value.isNotEmpty()
+        && name3.value.isNotEmpty() && name4.value.isNotEmpty()
+        && hcp1.value.isNotEmpty() && hcp2.value.isNotEmpty()
+        && hcp3.value.isNotEmpty() && hcp4.value.isNotEmpty()
 
   Column(modifier = Modifier.padding(8.dp)) {
     Text("Team 1")
-    EnterGolfer(name = golfer1Name, handicap = golfer1Hcp)
-    EnterGolfer(name = golfer2Name, handicap = golfer2Hcp)
+    EnterGolfer(name = name1, handicap = hcp1)
+    EnterGolfer(name = name2, handicap = hcp2)
     Spacer(modifier = Modifier.height(24.dp))
     Text("Team 2")
-    EnterGolfer(name = golfer3Name, handicap = golfer3Hcp)
-    EnterGolfer(name = golfer4Name, handicap = golfer4Hcp)
+    EnterGolfer(name = name3, handicap = hcp3)
+    EnterGolfer(name = name4, handicap = hcp4)
     Spacer(modifier = Modifier.weight(1.0f))
-    Button(modifier = Modifier
-      .fillMaxWidth()
-      .height(48.dp),
-           onClick = {
-             viewModel.startMatch(
-               Team(
-                 Golfer(golfer1Name.value, golfer1Hcp.value.toInt()),
-                 Golfer(golfer2Name.value, golfer2Hcp.value.toInt())
-               ),
-               Team(
-                 Golfer(golfer3Name.value, golfer3Hcp.value.toInt()),
-                 Golfer(golfer4Name.value, golfer4Hcp.value.toInt())
-               )
-             )
-             navController.navigate(SCORE.name)
-           }) {
+    Button(
+      modifier = Modifier
+        .fillMaxWidth()
+        .height(48.dp),
+      onClick = {
+        viewModel.startMatch(
+          Team(
+            Golfer(name1.value, hcp1.value.toInt()),
+            Golfer(name2.value, hcp2.value.toInt())
+          ),
+          Team(
+            Golfer(name3.value, hcp3.value.toInt()),
+            Golfer(name4.value, hcp4.value.toInt())
+          )
+        )
+        navController.navigate(SCORE.name)
+      },
+      enabled = enableStart
+    ) {
       Text(text = "Start Match")
     }
   }
+
 }

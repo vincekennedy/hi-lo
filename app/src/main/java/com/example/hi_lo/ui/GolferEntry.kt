@@ -9,6 +9,10 @@ import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -26,16 +30,21 @@ fun EnterGolfer(
   }
 }
 
+
 @Composable
 private fun NameEntry(name: MutableState<String>) {
+  var nameError by remember { mutableStateOf(false) }
+
   OutlinedTextField(
     value = name.value,
     label = { Text("Name") },
     singleLine = true,
+    isError = nameError,
     onValueChange = {
       if (it.isNotEmpty()) {
         name.value = it
       } else {
+        nameError = true
         name.value = ""
       }
     },
