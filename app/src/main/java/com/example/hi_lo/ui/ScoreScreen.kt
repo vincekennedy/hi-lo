@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.core.text.isDigitsOnly
 import com.example.hi_lo.data.Golfer
 
 @Composable
@@ -28,6 +29,9 @@ fun PlayerScore(golfer: Golfer, hcp: Int) {
   } else {
     Color.Transparent
   }
+
+  val score = remember { mutableStateOf("") }
+
   Row(
     modifier = Modifier
       .background(background),
@@ -36,9 +40,15 @@ fun PlayerScore(golfer: Golfer, hcp: Int) {
     Text(text = "${golfer.name} (${golfer.hcp})")
     Spacer(modifier = Modifier.width(12.dp))
     OutlinedTextField(
-      value = "",
+      value = score.value,
       label = { Text("Score") },
-      onValueChange = { },
+      onValueChange = {
+        if (it.isEmpty()) {
+          score.value = ""
+        } else if (it.isDigitsOnly() && it.toInt() <= 9) {
+          score.value = it
+        }
+      },
       keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
     )
   }
