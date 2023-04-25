@@ -15,8 +15,6 @@ import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -35,16 +33,6 @@ fun HiLoApp(
   navController: NavHostController = rememberNavController(),
 ) {
   val scaffoldState = rememberScaffoldState()
-
-  val golfer1Name = remember { mutableStateOf("") }
-  val golfer1Hcp = remember { mutableStateOf("") }
-  val golfer2Name = remember { mutableStateOf("") }
-  val golfer2Hcp = remember { mutableStateOf("") }
-  val golfer3Name = remember { mutableStateOf("") }
-  val golfer3Hcp = remember { mutableStateOf("") }
-  val golfer4Name = remember { mutableStateOf("") }
-  val golfer4Hcp = remember { mutableStateOf("") }
-
   val title: String by viewModel.title.observeAsState("")
 
   Scaffold(

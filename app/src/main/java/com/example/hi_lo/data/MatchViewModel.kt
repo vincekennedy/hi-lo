@@ -9,21 +9,23 @@ data class Team(val golfer1: Golfer = Golfer(), val golfer2: Golfer = Golfer())
 data class Golfer(var name: String = "Test", var hcp: Int = (Math.random() * 36).toInt())
 
 class MatchViewModel : ViewModel() {
+
+  private var _title: MutableLiveData<String> = MutableLiveData<String>("Setup Match")
+  val title: LiveData<String> get() = _title
+
   var team1: Team = Team()
   var team2: Team = Team()
 
   val team1Score: MutableLiveData<Int> = MutableLiveData(0)
   val team2Score: MutableLiveData<Int> = MutableLiveData(0)
   val hole: MutableLiveData<Int> = MutableLiveData(1)
-  private var _title: MutableLiveData<String> = MutableLiveData<String>("Setup Match")
-  val title: LiveData<String> get() = _title
 
   fun addPointsToTeam1Score(pts: Int) {
     team1Score.value = team1Score.value?.plus(pts)
   }
 
   fun addPointsToTeam2Score(pts: Int) {
-    team1Score.value = team2Score.value?.plus(pts)
+    team2Score.value = team2Score.value?.plus(pts)
   }
 
   fun startMatch(team1: Team, team2: Team) {
@@ -42,11 +44,18 @@ class MatchViewModel : ViewModel() {
   }
 
   /**
+   * Current Score
+   *
+   * A positive value means team 1 is winning, a negative value means team two is winning
+   */
+  private fun currentScore() = team2Score.value?.let { team1Score.value!!.minus(it) }
+
+  /**
    * @param value - Hole Number
    */
   private fun setTitle(value: Int) {
     course[value - 1].apply {
-      _title.value = "Hole $first     HCP: $second     PAR: $third"
+      _title.value = "Hole $first     HCP: $second     PAR: $third   Score : ${currentScore()}"
     }
   }
 
