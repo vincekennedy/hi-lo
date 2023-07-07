@@ -34,16 +34,20 @@ import com.example.hi_lo.data.MatchScreen.SCORE
 import com.example.hi_lo.data.MatchScreen.SUMMARY
 import com.example.hi_lo.data.MatchViewModel
 import com.example.hi_lo.data.course
+import java.lang.Integer.max
+import kotlin.math.min
+
+data class Score(var strokes: Int = 0, var points: Int = 0)
 
 
 @Composable
 fun EnterScore(matchViewModel: MatchViewModel, navController: NavHostController) {
   val hole = course[matchViewModel.hole.value!! - 1]
   val showConfirmation = remember { mutableStateOf(false) }
-  val p1 = remember { mutableStateOf(0) }
-  val p2 = remember { mutableStateOf(0) }
-  val p3 = remember { mutableStateOf(0) }
-  val p4 = remember { mutableStateOf(0) }
+  val p1 = remember { mutableStateOf(Score()) }
+  val p2 = remember { mutableStateOf(Score()) }
+  val p3 = remember { mutableStateOf(Score()) }
+  val p4 = remember { mutableStateOf(Score()) }
 
   val lowTeam = remember { mutableStateOf(0) }
   val highTeam = remember { mutableStateOf(20) }
@@ -84,7 +88,11 @@ fun EnterScore(matchViewModel: MatchViewModel, navController: NavHostController)
              showConfirmation.value = true
 
              val scores =
-               scoreHole(matchViewModel, listOf(p1.value, p2.value), listOf(p3.value, p4.value))
+               calculateHighLowScores(
+                 matchViewModel,
+                 listOf(p1.value, p2.value),
+                 listOf(p3.value, p4.value)
+               )
              lowTeam.value = scores.first
              highTeam.value = scores.second
            })
@@ -105,6 +113,15 @@ fun EnterScore(matchViewModel: MatchViewModel, navController: NavHostController)
           Button(
             onClick = {
               showConfirmation.value = false
+              calculatePointsEarned(
+                matchViewModel,
+                listOf(
+                  p1.value.points,
+                  p2.value.points,
+                  p3.value.points,
+                  p4.value.points
+                )
+              )
               if (matchViewModel.hasNextHole()) {
                 matchViewModel.nextHole()
                 navController.navigate(SCORE.name)
@@ -130,19 +147,19 @@ fun EnterScore(matchViewModel: MatchViewModel, navController: NavHostController)
   }
 }
 
-fun scoreHole(
+fun calculateHighLowScores(
   matchViewModel: MatchViewModel,
-  team1: List<Int>,
-  team2: List<Int>,
+  team1: List<Score>,
+  team2: List<Score>,
 ): Pair<Int, Int> {
 
   var lowTeam = 0
   var highTeam = 0
 
-  val low1 = team1.min()
-  val low2 = team2.min()
-  val high1 = team1.max()
-  val high2 = team2.max()
+  val low1 = min(team1[0].strokes, team1[1].strokes)
+  val low2 = min(team2[0].strokes, team2[1].strokes)
+  val high1 = max(team1[0].strokes, team1[1].strokes)
+  val high2 = max(team2[0].strokes, team2[1].strokes)
 
   if (low1 != low2) {
     lowTeam = if (low1 < low2) {
@@ -164,14 +181,25 @@ fun scoreHole(
     }
   }
 
+
+
   return Pair(lowTeam, highTeam)
 
 }
 
-@Composable
-fun PlayerScore(golfer: Golfer, hcp: Int, playerScore: MutableState<Int>) {
+fun calculatePointsEarned(matchViewModel: MatchViewModel, playerPoints: List<Int>) {
+  matchViewModel.addPointsToTeam1Score(playerPoints[0] + playerPoints[1])
+  matchViewModel.addPointsToTeam2Score(playerPoints[2] + playerPoints[3])
+}
 
- val strokes = if (golfer.hcp >= hcp) {
+@Composable
+fun PlayerScore(
+  golfer: Golfer,
+  hcp: Int,
+  playerScore: MutableState<Score>
+) {
+
+  val strokes = if (golfer.hcp >= hcp) {
     if (golfer.hcp.minus(18).minus(hcp) > 0) {
       2
     } else {
@@ -182,9 +210,15 @@ fun PlayerScore(golfer: Golfer, hcp: Int, playerScore: MutableState<Int>) {
   }
 
   val background = when (strokes) {
-    1 -> { Color.Green }
-    2 -> { Color.Yellow }
-    else -> { Color.Transparent }
+    1 -> {
+      Color.Green
+    }
+    2 -> {
+      Color.Yellow
+    }
+    else -> {
+      Color.Transparent
+    }
   }
 
   val score = remember { mutableStateOf("") }
@@ -204,7 +238,7 @@ fun PlayerScore(golfer: Golfer, hcp: Int, playerScore: MutableState<Int>) {
           score.value = ""
         } else if (it.isDigitsOnly() && it.toInt() <= 9) {
           score.value = it
-          playerScore.value = it.toInt().minus(strokes)
+          playerScore.value.strokes = it.toInt().minus(strokes)
         }
       },
       keyboardOptions = KeyboardOptions(
@@ -213,22 +247,22 @@ fun PlayerScore(golfer: Golfer, hcp: Int, playerScore: MutableState<Int>) {
       )
     )
   }
-  PointEntry()
+  PointEntry(playerScore)
 }
 
 @Composable
-fun PointEntry() {
+fun PointEntry(playerScore: MutableState<Score>) {
   Row {
-    LabeledCheckbox(label = "First")
-    LabeledCheckbox(label = "Closest")
-    LabeledCheckbox(label = "Sneaky")
-    LabeledCheckbox(label = "Pully")
-    LabeledCheckbox(label = "Sandy")
+    LabeledCheckbox(label = "First", playerScore)
+    LabeledCheckbox(label = "Closest", playerScore)
+    LabeledCheckbox(label = "Sneaky", playerScore)
+    LabeledCheckbox(label = "Pully", playerScore)
+    LabeledCheckbox(label = "Sandy", playerScore)
   }
 }
 
 @Composable
-fun LabeledCheckbox(label: String) {
+fun LabeledCheckbox(label: String, playerScore: MutableState<Score>) {
   val isChecked = remember { mutableStateOf(false) }
 
   Column(
@@ -238,6 +272,11 @@ fun LabeledCheckbox(label: String) {
   ) {
     Text(text = label)
     Checkbox(checked = isChecked.value, onCheckedChange = {
+      if (it) {
+        playerScore.value.points++
+      } else {
+        playerScore.value.points--
+      }
       isChecked.value = it
     })
   }
