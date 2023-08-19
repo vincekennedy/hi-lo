@@ -47,7 +47,7 @@ fun HiLoApp(
     content = { padding ->
       NavHost(
         navController = navController,
-        startDestination = MatchScreen.SCORE.name,
+        startDestination = MatchScreen.START.name,
         modifier = modifier.padding(padding)
       ) {
 
