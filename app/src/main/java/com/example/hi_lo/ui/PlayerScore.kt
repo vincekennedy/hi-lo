@@ -106,11 +106,10 @@ fun LabeledCheckbox(
   winningPlayerNumber: MutableLiveData<Int>? = null
 ) {
   val isChecked = remember { mutableStateOf(false) }
-  Timber.e("Player: ${playerScore.value.playerNumber} Winning: ${winningPlayerNumber?.value}")
 
   val isEnabled = remember {
     mutableStateOf(
-      winningPlayerNumber == null || winningPlayerNumber.value == 0 || playerScore.value.playerNumber == winningPlayerNumber.value
+      winningPlayerNumber?.value == 0 || playerScore.value.playerNumber == winningPlayerNumber?.value || winningPlayerNumber == null
     )
   }
 
@@ -123,13 +122,25 @@ fun LabeledCheckbox(
     Checkbox(checked = isChecked.value,
              enabled = isEnabled.value,
              onCheckedChange = {
-               if (it) {
-                 playerScore.value.points++
-               } else {
-                 playerScore.value.points--
+               if (winningPlayerNumber?.value == 0 || winningPlayerNumber?.value == playerScore.value.playerNumber){
+                 if (it) {
+                   playerScore.value.points++
+                   winningPlayerNumber.value = playerScore.value.playerNumber
+                 } else {
+                   playerScore.value.points--
+                   winningPlayerNumber.value = 0
+                 }
+                 isChecked.value = it
                }
-               isChecked.value = it
-               winningPlayerNumber?.value = playerScore.value.playerNumber
+
+               if (winningPlayerNumber == null) {
+                 if (it) {
+                   playerScore.value.points++
+                 } else {
+                   playerScore.value.points--
+                 }
+                 isChecked.value = it
+               }
              })
   }
 }
