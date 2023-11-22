@@ -1,7 +1,6 @@
 package com.example.hi_lo
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -24,16 +23,17 @@ import androidx.navigation.compose.rememberNavController
 import com.example.hi_lo.data.MatchScreen
 import com.example.hi_lo.data.MatchViewModel
 import com.example.hi_lo.ui.EnterScore
+import com.example.hi_lo.ui.ScoringSummary
 import com.example.hi_lo.ui.SetupMatch
 
 @Composable
 fun HiLoApp(
   modifier: Modifier = Modifier,
-  viewModel: MatchViewModel = MatchViewModel(),
+  matchViewModel: MatchViewModel = MatchViewModel(),
   navController: NavHostController = rememberNavController(),
 ) {
   val scaffoldState = rememberScaffoldState()
-  val title: String by viewModel.title.observeAsState("")
+  val title: String by matchViewModel.title.observeAsState("")
 
   Scaffold(
     scaffoldState = scaffoldState,
@@ -48,38 +48,28 @@ fun HiLoApp(
       NavHost(
         navController = navController,
         startDestination = MatchScreen.START.name,
-//        startDestination = MatchScreen.SCORE.name,
+//        startDestination = MatchScreen..name,
         modifier = modifier.padding(padding)
       ) {
 
         composable(route = MatchScreen.START.name) {
-          SetupMatch(viewModel, navController)
+          SetupMatch(matchViewModel, navController)
         }
         composable(route = MatchScreen.SCORE.name) {
-          EnterScore(viewModel, navController)
+          EnterScore(matchViewModel, navController)
         }
         composable(route = MatchScreen.SUMMARY.name) {
-          Column(modifier = Modifier.padding(12.dp)) {
-            Text(text = "Summary View")
-            Spacer(modifier = Modifier.weight(1.0f))
-            Button(modifier = Modifier
-              .fillMaxWidth()
-              .height(48.dp),
-                   content = { Text(text = "Finish") },
-                   onClick = {
-                     navController.navigate(MatchScreen.SETTLE.name)
-                   })
-          }
+          ScoringSummary(matchViewModel, navController)
         }
         composable(route = MatchScreen.SETTLE.name) {
           Column(modifier = Modifier.padding(12.dp)) {
-            Text(text = "Settle Up : ${viewModel.team1Score.value} \t ${viewModel.team2Score.value}")
+            Text(text = "Settle Up ${matchViewModel.team1Score.value} \t ${matchViewModel.team2Score.value}")
             Button(modifier = Modifier
               .fillMaxWidth()
               .height(48.dp),
                    content = { Text(text = "Start New Match") },
                    onClick = {
-                     viewModel.resetMatch()
+                     matchViewModel.resetMatch()
                      navController.navigate(MatchScreen.START.name)
                    })
           }
