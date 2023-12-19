@@ -1,6 +1,5 @@
 package com.example.hi_lo.ui
 
-import android.widget.Space
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -11,8 +10,8 @@ import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.hi_lo.data.MatchScreen
 import com.example.hi_lo.data.MatchViewModel
@@ -23,17 +22,22 @@ fun ScoringSummary(
     navController: NavHostController
 ) {
     Column(modifier = Modifier.padding(12.dp)) {
-        Text(text = "Summary View", modifier = Modifier.size(20.dp) )
-        Spacer(Modifier.size(20.dp))
-        Text(text = "Team 1 Points: ${matchViewModel.team1Score.value.toString()}")
-        Text(text = "Team 2 Points: ${matchViewModel.team2Score.value.toString()}")
+        Text(text = "Game Summary", fontSize = 28.sp)
+        Spacer(Modifier.size(12.dp))
+        Text(text = matchViewModel.getFinalScore(), fontSize = 24.sp)
+        Spacer(Modifier.size(40.dp))
+        Text(text = "Team 1 Points: ${matchViewModel.team1Score.value.toString()}", fontSize = 20.sp)
+        Spacer(Modifier.size(12.dp))
+        Text(text = "Team 2 Points: ${matchViewModel.team2Score.value.toString()}", fontSize = 20.sp)
+        Spacer(Modifier.size(12.dp))
         Spacer(modifier = Modifier.weight(1.0f))
         Button(modifier = Modifier
             .fillMaxWidth()
             .height(48.dp),
-            content = { Text(text = "Finish") },
+            content = { Text(text = "Start New Match") },
             onClick = {
-                navController.navigate(MatchScreen.SETTLE.name)
+                matchViewModel.resetMatch()
+                navController.navigate(MatchScreen.START.name)
             })
     }
 }
