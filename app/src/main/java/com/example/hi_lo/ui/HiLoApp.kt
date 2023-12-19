@@ -1,10 +1,6 @@
-package com.example.hi_lo
+package com.example.hi_lo.ui
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
@@ -15,16 +11,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.hi_lo.data.MatchScreen
 import com.example.hi_lo.data.MatchViewModel
-import com.example.hi_lo.ui.EnterScore
-import com.example.hi_lo.ui.ScoringSummary
-import com.example.hi_lo.ui.SetupMatch
 
 @Composable
 fun HiLoApp(
@@ -47,8 +39,8 @@ fun HiLoApp(
     content = { padding ->
       NavHost(
         navController = navController,
-        startDestination = MatchScreen.START.name,
-//        startDestination = MatchScreen..name,
+//        startDestination = MatchScreen.START.name,
+        startDestination = MatchScreen.SUMMARY.name,
         modifier = modifier.padding(padding)
       ) {
 
@@ -60,19 +52,6 @@ fun HiLoApp(
         }
         composable(route = MatchScreen.SUMMARY.name) {
           ScoringSummary(matchViewModel, navController)
-        }
-        composable(route = MatchScreen.SETTLE.name) {
-          Column(modifier = Modifier.padding(12.dp)) {
-            Text(text = "Settle Up ${matchViewModel.team1Score.value} \t ${matchViewModel.team2Score.value}")
-            Button(modifier = Modifier
-              .fillMaxWidth()
-              .height(48.dp),
-                   content = { Text(text = "Start New Match") },
-                   onClick = {
-                     matchViewModel.resetMatch()
-                     navController.navigate(MatchScreen.START.name)
-                   })
-          }
         }
       }
     })
