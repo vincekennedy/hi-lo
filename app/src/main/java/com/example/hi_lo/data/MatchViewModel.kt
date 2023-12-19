@@ -16,6 +16,8 @@ class MatchViewModel : ViewModel() {
   var team1: Team = Team()
   var team2: Team = Team()
 
+  var pricePerPoint: MutableLiveData<Int> = MutableLiveData(0)
+
   val team1Score: MutableLiveData<Int> = MutableLiveData(0)
   val team2Score: MutableLiveData<Int> = MutableLiveData(0)
   val hole: MutableLiveData<Int> = MutableLiveData(1)

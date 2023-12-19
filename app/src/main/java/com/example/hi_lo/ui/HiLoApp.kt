@@ -24,6 +24,7 @@ import com.example.hi_lo.data.MatchScreen
 import com.example.hi_lo.data.MatchViewModel
 import com.example.hi_lo.ui.EnterScore
 import com.example.hi_lo.ui.ScoringSummary
+import com.example.hi_lo.ui.SettleScreen
 import com.example.hi_lo.ui.SetupMatch
 
 @Composable
@@ -48,7 +49,7 @@ fun HiLoApp(
       NavHost(
         navController = navController,
         startDestination = MatchScreen.START.name,
-//        startDestination = MatchScreen..name,
+//        startDestination = MatchScreen.SUMMARY.name,
         modifier = modifier.padding(padding)
       ) {
 
@@ -62,17 +63,7 @@ fun HiLoApp(
           ScoringSummary(matchViewModel, navController)
         }
         composable(route = MatchScreen.SETTLE.name) {
-          Column(modifier = Modifier.padding(12.dp)) {
-            Text(text = "Settle Up ${matchViewModel.team1Score.value} \t ${matchViewModel.team2Score.value}")
-            Button(modifier = Modifier
-              .fillMaxWidth()
-              .height(48.dp),
-                   content = { Text(text = "Start New Match") },
-                   onClick = {
-                     matchViewModel.resetMatch()
-                     navController.navigate(MatchScreen.START.name)
-                   })
-          }
+          SettleScreen(matchViewModel = matchViewModel, navController = navController)
         }
       }
     })
