@@ -23,8 +23,6 @@ import com.example.hi_lo.data.HoleViewModel
 import com.example.hi_lo.data.MatchScreen.SCORE
 import com.example.hi_lo.data.MatchScreen.SUMMARY
 import com.example.hi_lo.data.MatchViewModel
-import com.example.hi_lo.data.course
-import timber.log.Timber
 import java.lang.Integer.max
 import kotlin.math.min
 
@@ -33,7 +31,7 @@ data class Score(val playerNumber: Int, var strokes: Int = 0, var points: Int = 
 
 @Composable
 fun EnterScore(matchViewModel: MatchViewModel, navController: NavHostController) {
-  val hole = course[matchViewModel.hole.value!! - 1]
+  val hole = course.holes[matchViewModel.hole.value!! - 1]
   val showConfirmation = remember { mutableStateOf(false) }
   val p1 = remember { mutableStateOf(Score(1)) }
   val p2 = remember { mutableStateOf(Score(2)) }
@@ -49,8 +47,8 @@ fun EnterScore(matchViewModel: MatchViewModel, navController: NavHostController)
     verticalArrangement = Arrangement.Center
   ) {
 
-    PlayerScore(matchViewModel.team1.golfer1, hole.second, p1, holeScoreViewModel)
-    PlayerScore(matchViewModel.team1.golfer2, hole.second, p2, holeScoreViewModel)
+    PlayerScore(matchViewModel.team1.golfer1, hole.holeHcp, p1, holeScoreViewModel)
+    PlayerScore(matchViewModel.team1.golfer2, hole.holeHcp, p2, holeScoreViewModel)
 
     Row(
       Modifier.height(20.dp),
@@ -62,8 +60,8 @@ fun EnterScore(matchViewModel: MatchViewModel, navController: NavHostController)
       )
     }
 
-    PlayerScore(matchViewModel.team2.golfer1, hole.second, p3, holeScoreViewModel)
-    PlayerScore(matchViewModel.team2.golfer2, hole.second, p4, holeScoreViewModel)
+    PlayerScore(matchViewModel.team2.golfer1, hole.holeHcp, p3, holeScoreViewModel)
+    PlayerScore(matchViewModel.team2.golfer2, hole.holeHcp, p4, holeScoreViewModel)
 
     Spacer(modifier = Modifier.weight(1.0f))
     Button(modifier = Modifier

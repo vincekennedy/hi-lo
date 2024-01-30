@@ -3,6 +3,7 @@ package com.example.hi_lo.data
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.hi_lo.ui.course
 
 data class Team(val golfer1: Golfer = Golfer(), val golfer2: Golfer = Golfer())
 
@@ -16,10 +17,10 @@ class MatchViewModel : ViewModel() {
     var team1: Team = Team()
     var team2: Team = Team()
 
-    var pricePerPoint: MutableLiveData<Int> = MutableLiveData(2)
+    var pricePerPoint: MutableLiveData<Int> = MutableLiveData(1)
 
-    val team1Score: MutableLiveData<Int> = MutableLiveData(10)
-    val team2Score: MutableLiveData<Int> = MutableLiveData(2)
+    val team1Score: MutableLiveData<Int> = MutableLiveData(0)
+    val team2Score: MutableLiveData<Int> = MutableLiveData(0)
     val hole: MutableLiveData<Int> = MutableLiveData(1)
 
     fun addPointsToTeam1Score(pts: Int) {
@@ -70,9 +71,9 @@ class MatchViewModel : ViewModel() {
      * @param value - Hole Number
      */
     private fun setTitle(value: Int) {
-        course[value - 1].apply {
+        course.holes[value - 1].apply {
             _title.value =
-                "Hole $first     HCP: $second     PAR: $third   Score : ${currentScore()}"
+                "Hole $holeNum     HCP: $holeHcp     PAR: $holePar   Score : ${currentScore()}"
         }
     }
 
