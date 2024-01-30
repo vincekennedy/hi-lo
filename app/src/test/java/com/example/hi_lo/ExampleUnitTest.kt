@@ -1,4 +1,4 @@
-package com.example.hi_lo
+package com.hi_lo
 
 import org.junit.Test
 

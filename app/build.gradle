@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-  namespace 'com.example.hi_lo'
+  namespace 'com.hi_lo'
   compileSdk 33
 
   defaultConfig {
-    applicationId "com.example.hi_lo"
+    applicationId "com.hi_lo"
     minSdk 24
     targetSdk 33
     versionCode 1
