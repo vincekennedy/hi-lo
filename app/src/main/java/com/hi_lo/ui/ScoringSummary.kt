@@ -37,7 +37,7 @@ fun ScoringSummary(
             content = { Text(text = "Start New Match") },
             onClick = {
                 matchViewModel.resetMatch()
-                navController.navigate(MatchScreen.START.name)
+                navController.navigate(MatchScreen.SETUP_MATCH.name)
             })
     }
 }

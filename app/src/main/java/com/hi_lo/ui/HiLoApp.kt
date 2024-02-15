@@ -15,33 +15,9 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.hi_lo.data.Course
-import com.hi_lo.data.Hole
 import com.hi_lo.data.MatchScreen
 import com.hi_lo.data.MatchViewModel
 
-private val holes = listOf(
-  Hole(1, 7, 4),
-  Hole(2, 1, 4),
-  Hole(3, 3, 4),
-  Hole(4, 13, 4),
-  Hole(5, 15, 3),
-  Hole(6, 9, 5),
-  Hole(7, 5, 4),
-  Hole(8, 11, 3),
-  Hole(9, 17, 5),
-  Hole(10, 6, 4),
-  Hole(11, 2, 4),
-  Hole(12, 10, 4),
-  Hole(13, 14, 5),
-  Hole(14, 8, 4),
-  Hole(15, 18, 3),
-  Hole(16, 16, 5),
-  Hole(17, 4, 4),
-  Hole(18, 12, 3),
-)
-
-val course = Course(name = "Maple Creek", slope = 134, rating = 72.5f, holes = holes)
 
 @Composable
 fun HiLoApp(
@@ -64,11 +40,16 @@ fun HiLoApp(
     content = { padding ->
       NavHost(
         navController = navController,
-        startDestination = MatchScreen.START.name,
+        startDestination = MatchScreen.COURSE_SELECT.name,
         modifier = modifier.padding(padding)
       ) {
-
-        composable(route = MatchScreen.START.name) {
+        composable(route = MatchScreen.COURSE_SELECT.name) {
+          CourseSelection {
+            matchViewModel.setupMatch("")
+            navController.navigate(MatchScreen.SETUP_MATCH.name)
+          }
+        }
+        composable(route = MatchScreen.SETUP_MATCH.name) {
           SetupMatch(matchViewModel, navController)
         }
         composable(route = MatchScreen.SCORE.name) {

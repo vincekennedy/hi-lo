@@ -24,7 +24,6 @@ import com.hi_lo.data.Golfer
 import com.hi_lo.data.MatchScreen.SCORE
 import com.hi_lo.data.MatchViewModel
 import com.hi_lo.data.Team
-import com.hi_lo.ui.EnterGolfer
 
 @Composable
 fun SetupMatch(viewModel: MatchViewModel, navController: NavHostController) {

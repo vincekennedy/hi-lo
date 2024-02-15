@@ -25,7 +25,7 @@ import androidx.core.text.isDigitsOnly
 import androidx.lifecycle.MutableLiveData
 import com.hi_lo.data.Golfer
 import com.hi_lo.data.HoleViewModel
-import timber.log.Timber
+import com.hi_lo.data.Score
 
 
 @Composable

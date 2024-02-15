@@ -23,15 +23,14 @@ import com.hi_lo.data.HoleViewModel
 import com.hi_lo.data.MatchScreen.SCORE
 import com.hi_lo.data.MatchScreen.SUMMARY
 import com.hi_lo.data.MatchViewModel
+import com.hi_lo.data.Score
 import java.lang.Integer.max
 import kotlin.math.min
-
-data class Score(val playerNumber: Int, var strokes: Int = 0, var points: Int = 0)
 
 
 @Composable
 fun EnterScore(matchViewModel: MatchViewModel, navController: NavHostController) {
-  val hole = course.holes[matchViewModel.hole.value!! - 1]
+  val hole = matchViewModel.currentHole()
   val showConfirmation = remember { mutableStateOf(false) }
   val p1 = remember { mutableStateOf(Score(1)) }
   val p2 = remember { mutableStateOf(Score(2)) }
