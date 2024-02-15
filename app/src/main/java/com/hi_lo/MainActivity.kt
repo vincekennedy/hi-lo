@@ -5,7 +5,9 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import com.hi_lo.ui.HiLoApp
 import com.hi_lo.ui.theme.HiLoTheme
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
   //region Lifecycle
   override fun onCreate(savedInstanceState: Bundle?) {
