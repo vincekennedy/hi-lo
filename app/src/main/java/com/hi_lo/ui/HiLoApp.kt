@@ -44,8 +44,8 @@ fun HiLoApp(
         modifier = modifier.padding(padding)
       ) {
         composable(route = MatchScreen.COURSE_SELECT.name) {
-          CourseSelection {
-            matchViewModel.setupMatch("")
+          CourseSelection(matchViewModel) {
+            matchViewModel.setupMatch()
             navController.navigate(MatchScreen.SETUP_MATCH.name)
           }
         }

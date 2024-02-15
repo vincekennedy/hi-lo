@@ -10,28 +10,6 @@ data class Golfer(val name: String = "Test", val hcp: Int = (Math.random() * 36)
 
 data class Score(val playerNumber: Int, var strokes: Int = 0, var points: Int = 0)
 
-private val holes = listOf(
-    Hole(1, 7, 4),
-    Hole(2, 1, 4),
-    Hole(3, 3, 4),
-    Hole(4, 13, 4),
-    Hole(5, 15, 3),
-    Hole(6, 9, 5),
-    Hole(7, 5, 4),
-    Hole(8, 11, 3),
-    Hole(9, 17, 5),
-    Hole(10, 6, 4),
-    Hole(11, 2, 4),
-    Hole(12, 10, 4),
-    Hole(13, 14, 5),
-    Hole(14, 8, 4),
-    Hole(15, 18, 3),
-    Hole(16, 16, 5),
-    Hole(17, 4, 4),
-    Hole(18, 12, 3),
-)
-
-val course = Course(name = "Maple Creek", slope = 134, rating = 72.5f, holes = holes)
 
 class MatchViewModel : ViewModel() {
 
@@ -42,7 +20,7 @@ class MatchViewModel : ViewModel() {
     var team2: Team = Team()
 
     var pricePerPoint: MutableLiveData<Int> = MutableLiveData(1)
-    private var selectedCourse: String = ""
+    private var selectedCourse: Course? = null
 
     val team1Score: MutableLiveData<Int> = MutableLiveData(0)
     val team2Score: MutableLiveData<Int> = MutableLiveData(0)
@@ -56,9 +34,12 @@ class MatchViewModel : ViewModel() {
         team2Score.value = team2Score.value?.plus(pts)
     }
 
-    fun setupMatch(course: String) {
+    fun selectCourse(course: Course) {
+        selectedCourse = course
+    }
+
+    fun setupMatch() {
         this._title.value = "Setup Match"
-        this.selectedCourse = course
     }
 
     fun startMatch(team1: Team, team2: Team) {
@@ -68,7 +49,7 @@ class MatchViewModel : ViewModel() {
     }
 
     fun currentHole(): Hole {
-        return holes[currentHole.value!!.minus(1)]
+        return selectedCourse!!.holes[currentHole.value!!.minus(1)]
     }
 
     fun hasNextHole(): Boolean {
@@ -105,7 +86,7 @@ class MatchViewModel : ViewModel() {
      * @param value - Hole Number
      */
     private fun setTitle(value: Int) {
-        course.holes[value - 1].apply {
+        mapleCreek.holes[value - 1].apply {
             _title.value =
                 "Hole $holeNum     HCP: $holeHcp     PAR: $holePar   Score : ${currentScore()}"
         }

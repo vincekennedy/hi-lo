@@ -22,14 +22,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import com.hi_lo.data.MatchViewModel
+import com.hi_lo.data.augustaNational
+import com.hi_lo.data.mapleCreek
 
 
 @Composable
-fun CourseSelection(onSetupClicked: () -> Unit) {
+fun CourseSelection(matchViewModel: MatchViewModel, onSetupClicked: () -> Unit) {
     Column(modifier = Modifier.padding(8.dp)) {
         Text("Select a course: ")
         Spacer(modifier = Modifier.height(20.dp))
-        CourseSelectDropdown()
+        CourseSelectDropdown(matchViewModel)
         Spacer(modifier = Modifier.height(20.dp))
         Button(modifier = Modifier.fillMaxWidth().height(48.dp),
             onClick = {
@@ -42,11 +45,11 @@ fun CourseSelection(onSetupClicked: () -> Unit) {
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-private fun CourseSelectDropdown() {
+private fun CourseSelectDropdown(matchViewModel: MatchViewModel) {
     val context = LocalContext.current
-    val courses = arrayOf("Augusta", "Torrey Pines", "St. Andrews", "Maple Creek")
+    val courses = arrayOf(mapleCreek, augustaNational)
     var expanded by remember { mutableStateOf(false) }
-    var selectedText by remember { mutableStateOf(courses[0]) }
+    var selectedCourse by remember { mutableStateOf(courses[0]) }
     Box(
         modifier = Modifier.fillMaxWidth()
     ) {
@@ -57,7 +60,7 @@ private fun CourseSelectDropdown() {
             }
         ) {
             TextField(
-                value = selectedText,
+                value = selectedCourse.name,
                 onValueChange = {},
                 readOnly = true,
                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
@@ -70,11 +73,12 @@ private fun CourseSelectDropdown() {
             ) {
                 courses.forEach { item ->
                     DropdownMenuItem(
-                        content = { Text(text = item) },
+                        content = { Text(text = item.name) },
                         onClick = {
-                            selectedText = item
+                            selectedCourse = item
+                            matchViewModel.selectCourse(item)
                             expanded = false
-                            Toast.makeText(context, item, Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, item.name, Toast.LENGTH_SHORT).show()
                         }
                     )
                 }
