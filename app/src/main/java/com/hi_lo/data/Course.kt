@@ -1,6 +1,6 @@
 package com.hi_lo.data
 val augustaNational = Course(
-    name = "Maple Creek", slope = 129, rating = 72.1f, holes = listOf(
+    name = "Augusta National", slope = 129, rating = 72.1f, holes = listOf(
         Hole(1, 9, 4),
         Hole(2, 1, 5),
         Hole(3, 13, 4),

@@ -39,7 +39,7 @@ class MatchViewModel : ViewModel() {
     }
 
     fun setupMatch() {
-        this._title.value = "Setup Match"
+        this._title.value = "Setup Match @ ${selectedCourse!!.name}"
     }
 
     fun startMatch(team1: Team, team2: Team) {
