@@ -22,13 +22,23 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import com.hi_lo.data.CoursesViewModel
 import com.hi_lo.data.MatchViewModel
 import com.hi_lo.data.augustaNational
 import com.hi_lo.data.mapleCreek
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import timber.log.Timber
 
 
 @Composable
 fun CourseSelection(matchViewModel: MatchViewModel, onSetupClicked: () -> Unit) {
+    val courseViewModel = CoursesViewModel()
+    CoroutineScope(Dispatchers.IO).launch {
+        courseViewModel.fetchCourses()
+    }
+    Timber.e("Courses: $courseViewModel")
     Column(modifier = Modifier.padding(8.dp)) {
         Text("Select a course: ")
         Spacer(modifier = Modifier.height(20.dp))
