@@ -5,6 +5,6 @@ import retrofit2.http.GET
 
 interface CourseService {
 
-    @GET("courses.json")
+    @GET("api/v1/courses")
     suspend fun getCourses(): List<Course>
 }

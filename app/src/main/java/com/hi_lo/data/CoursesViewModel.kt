@@ -5,16 +5,13 @@ import com.hi_lo.data.retrofit.ApiClient
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import timber.log.Timber
 
 class CoursesViewModel {
-    var courses: MutableLiveData<Course> = MutableLiveData(null)
+    var courses: MutableLiveData<List<Course>> = MutableLiveData(null)
 
-    fun fetchCourses(): MutableLiveData<Course> {
+    fun fetchCourses(): MutableLiveData<List<Course>> {
         CoroutineScope(Dispatchers.IO).launch {
-            val c = ApiClient.courseService.getCourses()
-
-            Timber.e("Courses: $c")
+            courses.postValue(ApiClient.courseService.getCourses())
         }
         return courses
     }
