@@ -22,17 +22,25 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.MutableLiveData
+import com.hi_lo.data.Course
+import com.hi_lo.data.CoursesViewModel
 import com.hi_lo.data.MatchViewModel
-import com.hi_lo.data.augustaNational
-import com.hi_lo.data.mapleCreek
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 
 @Composable
 fun CourseSelection(matchViewModel: MatchViewModel, onSetupClicked: () -> Unit) {
+    val courseViewModel = CoursesViewModel()
+    CoroutineScope(Dispatchers.IO).launch {
+        courseViewModel.fetchCourses()
+    }
     Column(modifier = Modifier.padding(8.dp)) {
         Text("Select a course: ")
         Spacer(modifier = Modifier.height(20.dp))
-        CourseSelectDropdown(matchViewModel)
+        CourseSelectDropdown(matchViewModel, courseViewModel.courses)
         Spacer(modifier = Modifier.height(20.dp))
         Button(modifier = Modifier.fillMaxWidth().height(48.dp),
             onClick = {
@@ -45,11 +53,10 @@ fun CourseSelection(matchViewModel: MatchViewModel, onSetupClicked: () -> Unit) 
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-private fun CourseSelectDropdown(matchViewModel: MatchViewModel) {
+private fun CourseSelectDropdown(matchViewModel: MatchViewModel, courses: MutableLiveData<List<Course>>) {
     val context = LocalContext.current
-    val courses = arrayOf(mapleCreek, augustaNational)
     var expanded by remember { mutableStateOf(false) }
-    var selectedCourse by remember { mutableStateOf(courses[0]) }
+    var selectedCourse by remember { mutableStateOf(courses.value?.first()) }
     Box(
         modifier = Modifier.fillMaxWidth()
     ) {
@@ -60,8 +67,8 @@ private fun CourseSelectDropdown(matchViewModel: MatchViewModel) {
             }
         ) {
             TextField(
-                value = selectedCourse.name,
-                onValueChange = {},
+                value = selectedCourse?.name ?: "Choose a Course...",
+                onValueChange = { },
                 readOnly = true,
                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
                 modifier = Modifier
@@ -71,7 +78,7 @@ private fun CourseSelectDropdown(matchViewModel: MatchViewModel) {
                 expanded = expanded,
                 onDismissRequest = { expanded = false }
             ) {
-                courses.forEach { item ->
+                courses.value?.forEach { item ->
                     DropdownMenuItem(
                         content = { Text(text = item.name) },
                         onClick = {

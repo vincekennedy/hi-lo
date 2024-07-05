@@ -35,7 +35,7 @@ class MatchViewModel : ViewModel() {
     }
 
     fun selectCourse(course: Course) {
-        selectedCourse = course
+        this.selectedCourse = course
     }
 
     fun setupMatch() {
