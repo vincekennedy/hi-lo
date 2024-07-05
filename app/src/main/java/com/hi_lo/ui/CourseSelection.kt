@@ -15,6 +15,7 @@ import androidx.compose.material.ExposedDropdownMenuDefaults
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -26,15 +27,12 @@ import androidx.lifecycle.MutableLiveData
 import com.hi_lo.data.Course
 import com.hi_lo.data.CoursesViewModel
 import com.hi_lo.data.MatchViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 
 @Composable
 fun CourseSelection(matchViewModel: MatchViewModel, onSetupClicked: () -> Unit) {
     val courseViewModel = CoursesViewModel()
-    CoroutineScope(Dispatchers.IO).launch {
+    LaunchedEffect(key1 = "onLaunch") {
         courseViewModel.fetchCourses()
     }
     Column(modifier = Modifier.padding(8.dp)) {
@@ -42,7 +40,9 @@ fun CourseSelection(matchViewModel: MatchViewModel, onSetupClicked: () -> Unit) 
         Spacer(modifier = Modifier.height(20.dp))
         CourseSelectDropdown(matchViewModel, courseViewModel.courses)
         Spacer(modifier = Modifier.height(20.dp))
-        Button(modifier = Modifier.fillMaxWidth().height(48.dp),
+        Button(modifier = Modifier
+            .fillMaxWidth()
+            .height(48.dp),
             onClick = {
                 onSetupClicked()
             }) {
