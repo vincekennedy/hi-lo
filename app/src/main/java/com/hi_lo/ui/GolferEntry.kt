@@ -14,6 +14,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.core.text.isDigitsOnly
@@ -40,6 +41,7 @@ private fun NameEntry(name: MutableState<String>) {
     label = { Text("Name") },
     singleLine = true,
     isError = nameError,
+    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
     onValueChange = {
       if (it.isNotEmpty()) {
         name.value = it
@@ -65,6 +67,6 @@ private fun HandicapEntry(handicap: MutableState<String>) {
         handicap.value = it
       }
     },
-    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Next)
   )
 }

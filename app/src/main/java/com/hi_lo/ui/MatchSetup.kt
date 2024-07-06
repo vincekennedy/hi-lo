@@ -74,7 +74,7 @@ fun SetupMatch(viewModel: MatchViewModel, navController: NavHostController) {
       },
       keyboardOptions = KeyboardOptions(
         keyboardType = KeyboardType.Number,
-        imeAction = ImeAction.Next
+        imeAction = ImeAction.Done
       )
     )
     Spacer(modifier = Modifier.weight(1.0f))
