@@ -67,7 +67,7 @@ fun SetupMatch(viewModel: MatchViewModel, navController: NavHostController) {
       onValueChange = {
         if (it.isEmpty()) {
           pricePerPoint.value = ""
-        } else if (it.isDigitsOnly() && it.toInt() <= 9) {
+        } else if (it.isDigitsOnly()) {
           pricePerPoint.value = it
           viewModel.pricePerPoint.value = it.toInt()
         }
